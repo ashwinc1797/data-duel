@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Data Duel — Excel Basics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ECEEF5; --panel:#FFFFFF; --panel2:#E3E6F0; --line:#C9CEDF; --text:#151A2D; --muted:#555C7C;
+  --gold:#A87100; --gold-strong:#E3A400; --goldbg:#FFF2CC; --red:#CC3333; --red-soft:#FBE3E3;
+  --blue:#1A6BBF; --blue-soft:#DFECFA; --easy:#137A50; --med:#9A6700; --hard:#C02D2D;
+  --on-accent:#FFFFFF; --stage:#1C2033; --stage-text:#F3F4F9; --stage-muted:#A9AECB;
+  --display:"Barlow Condensed", "Arial Narrow", "Roboto Condensed", Impact, sans-serif;
+  --body:"Barlow", "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#161A28; --panel:#20253A; --panel2:#2B3150; --line:#3A4166; --text:#F3F4F9; --muted:#A9AECB;
+    --gold:#F6C343; --gold-strong:#F6C343; --goldbg:#3A3220; --red:#F06464; --red-soft:#3A2431;
+    --blue:#58AEF3; --blue-soft:#1C3150; --easy:#4FCB8E; --med:#F6C343; --hard:#F06464;
+    --on-accent:#10131F; --stage:#0F1220; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#161A28; --panel:#20253A; --panel2:#2B3150; --line:#3A4166; --text:#F3F4F9; --muted:#A9AECB;
+  --gold:#F6C343; --gold-strong:#F6C343; --goldbg:#3A3220; --red:#F06464; --red-soft:#3A2431;
+  --blue:#58AEF3; --blue-soft:#1C3150; --easy:#4FCB8E; --med:#F6C343; --hard:#F06464;
+  --on-accent:#10131F; --stage:#0F1220; color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.4;min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold-strong);outline-offset:2px}
+.wrap{max-width:1680px;margin:0 auto;padding:16px 20px 28px}
+
+/* header */
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .bars{display:flex;gap:4px}
+.brand .bars i{display:block;width:9px;height:46px;border-radius:2px}
+.brand .bars i:first-child{background:var(--red)} .brand .bars i:last-child{background:var(--blue)}
+.brand h1{font-family:var(--display);font-weight:800;font-size:44px;line-height:.9;margin:0;letter-spacing:.5px}
+.brand h1 .edition{font-size:.5em;letter-spacing:1px;color:var(--on-accent);background:#1F8A57;border-radius:6px;padding:2px 8px;vertical-align:.35em;margin-left:4px}
+.brand p{margin:2px 0 0;font-family:var(--display);font-weight:700;font-size:19px;color:var(--gold)}
+.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.round-chip{display:flex;align-items:baseline;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 16px;font-family:var(--display);font-weight:700}
+.round-chip span{font-size:18px;color:var(--muted)} .round-chip b{font-size:34px;line-height:1}
+
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 16px;font-weight:600;font-size:16px;display:inline-flex;align-items:center;gap:8px;justify-content:center;transition:background .15s, transform .08s}
+a.btn{color:inherit;text-decoration:none}
+.btn:hover{background:var(--panel2)}.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.small{padding:7px 12px;font-size:14.5px}
+.btn.danger{color:var(--hard)}
+.btn.primary{background:var(--gold-strong);border-color:var(--gold-strong);color:#1C1500}
+.btn.primary:hover{filter:brightness(1.06);background:var(--gold-strong)}
+.btn.xl{line-height:1.1;font-family:var(--display);font-weight:800;font-size:clamp(18px,1.55vw,26px);padding:14px 22px;border-radius:12px;letter-spacing:.3px}
+.btn.pulse{animation:pulse 1.2s ease-in-out infinite;border-color:var(--gold-strong)}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--gold-strong) 60%,transparent)}50%{box-shadow:0 0 0 8px transparent}}
+
+/* scoreboard */
+.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;margin-bottom:14px}
+.team{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;gap:4px 14px;position:relative;overflow:hidden}
+.team::before{content:"";position:absolute;inset:0 auto 0 0;width:8px;background:var(--tc)}
+.team.t0{--tc:var(--red);--tsoft:var(--red-soft)} .team.t1{--tc:var(--blue);--tsoft:var(--blue-soft)}
+.team-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-left:6px}
+.team-name{font-family:var(--display);font-weight:800;font-size:30px;background:transparent;border:1px dashed transparent;border-radius:6px;padding:0 4px;width:min(100%,320px)}
+.team-name:hover{border-color:var(--line)} .team-name:focus{border-color:var(--tc);outline:none}
+.role{font-weight:700;font-size:14px;padding:3px 10px;border-radius:999px;background:var(--tsoft);color:var(--tc);white-space:nowrap}
+.role{display:inline-flex;align-items:center;gap:6px}
+.score{grid-row:1 / span 2;grid-column:2;font-family:var(--display);font-weight:800;font-size:84px;line-height:.95;color:var(--tc);min-width:2ch;text-align:right;align-self:center;font-variant-numeric:tabular-nums}
+.score.bump{animation:bump .45s ease}
+@keyframes bump{30%{transform:scale(1.18)}}
+.score-btns{display:flex;gap:8px;padding-left:6px}
+.score-btns button{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--tc);background:transparent;color:var(--tc);border-radius:10px;padding:6px 16px;font-family:var(--display);font-weight:800;font-size:22px}
+.score-btns button:hover{background:var(--tsoft)}
+.score-btns button.bonus{background:var(--tc);color:var(--on-accent)}
+.vs{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:170px}
+.vs-mark{font-family:var(--display);font-weight:800;font-size:40px;line-height:1;color:var(--muted)}
+.last-action{font-size:13px;color:var(--muted);text-align:center;min-height:1.2em;max-width:190px}
+
+/* arena */
+.arena{display:grid;grid-template-columns:280px minmax(0,1fr) 330px;gap:14px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.panel h2{font-family:var(--display);font-weight:700;font-size:21px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline}
+.panel h2 + *{margin-top:0}
+.setup section + section{margin-top:18px}
+.link-btn{background:none;border:0;color:var(--blue);font-family:var(--body);font-size:14px;font-weight:600;padding:0}
+.tool-grid{display:grid;gap:8px}
+.choice{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:2px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 12px;font-weight:700;font-size:18px}
+.choice .ico{width:30px;display:inline-grid;place-items:center}
+.ic{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-0.18em}
+.ic.fill{fill:currentColor;stroke:none}
+.tile{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--tool,#475069);color:#fff;flex:none}
+.tile .ic{width:20px;height:20px}
+.tile.sm{width:22px;height:22px;border-radius:6px} .tile.sm .ic{width:14px;height:14px}
+.tile.lg{width:52px;height:52px;border-radius:13px} .tile.lg .ic{width:30px;height:30px}
+.bars-ic{display:inline-flex;align-items:flex-end;gap:2px;height:18px}
+.bars-ic i{display:block;width:5px;border-radius:1.5px;background:currentColor;opacity:.28}
+.bars-ic i:nth-child(1){height:7px} .bars-ic i:nth-child(2){height:12px} .bars-ic i:nth-child(3){height:18px}
+.bars-ic i.on{opacity:1}
+.dz-easy{color:var(--easy)} .dz-medium{color:var(--med)} .dz-hard{color:var(--hard)} .dz-random{color:var(--muted)}
+.special-grid{display:grid;grid-template-columns:1fr;gap:6px}
+.special-grid .choice{font-size:15.5px;padding:7px 10px;gap:10px;line-height:1.15;border-width:2px}
+.special-grid .choice .ico{width:22px;color:var(--gold)}
+.special-grid .choice.wide{grid-column:1 / -1}
+.brand .mark{width:52px;height:52px;border-radius:12px;background:var(--stage);color:var(--gold-strong);display:grid;place-items:center;border:2px solid var(--gold-strong)}
+.brand .mark .ic{width:30px;height:30px}
+.pill{display:inline-flex;align-items:center;gap:8px}
+.pill .ic{width:22px;height:22px}
+.c-tool .tile{margin-right:2px}
+.err-head{display:flex;align-items:center;gap:16px}
+.err-head .tile{--tool:#C02D2D}
+.awards label span{display:inline-flex;align-items:center;gap:8px}
+.awards label .ic{color:var(--gold)}
+.final-hero h2{display:inline-flex;align-items:center;gap:14px}
+.final-hero h2 .ic{color:#F6C343;width:52px;height:52px}
+.choice .cnt{margin-left:auto;font-weight:500;font-size:13px;color:var(--muted)}
+.choice[aria-pressed="true"]{border-color:var(--gold-strong);background:var(--goldbg)}
+.choice .chk{display:none;color:var(--gold);margin-left:6px} .choice[aria-pressed="true"] .chk{display:inline-flex}
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.diff-grid .choice{font-size:16px;padding:9px 10px;gap:8px}
+.diff-grid .choice::after{display:none}
+select{width:100%;border:2px solid var(--line);border-radius:12px;padding:10px;background:var(--panel);font-weight:600;font-size:16px}
+.hint{font-size:14px;color:var(--muted);margin:8px 0 0}
+.pool{margin-top:16px;padding:10px 12px;border-radius:10px;background:var(--panel2);font-size:14.5px}
+.pool b{font-family:var(--display);font-size:22px}
+
+/* stage card */
+.stage{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--stage);color:var(--stage-text);border-radius:18px;min-height:470px;padding:28px 34px;display:flex;flex-direction:column;position:relative;overflow:hidden;border:3px solid transparent}
+.card::before,.card::after{content:"";position:absolute;top:0;height:8px;width:50%}
+.card::before{left:0;background:var(--red)} .card::after{right:0;background:var(--blue)}
+.card.revealed{border-color:var(--gold-strong);animation:reveal .55s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes reveal{from{transform:scale(.95);opacity:.3}to{transform:scale(1);opacity:1}}
+.idle{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px}
+.idle .ready{font-family:var(--display);font-weight:800;font-size:clamp(80px,11vw,170px);line-height:.9;color:var(--gold-strong)}
+.idle p{margin:0;color:var(--stage-muted);font-size:20px;max-width:34ch}
+.spin{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}
+.spin .s-tool{font-family:var(--display);font-weight:700;font-size:30px;color:var(--stage-muted)}
+.spin .s-topic{font-family:var(--display);font-weight:800;font-size:clamp(46px,6vw,88px);line-height:1;filter:blur(.6px);opacity:.85}
+.c-tool{display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:700;font-size:32px;color:var(--stage-muted);margin-top:6px}
+
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.pill{font-family:var(--display);font-weight:800;font-size:22px;padding:4px 14px;border-radius:999px;border:2px solid currentColor;white-space:nowrap}
+.pill.easy{color:#4FCB8E} .pill.medium{color:#F6C343} .pill.hard{color:#F27373}
+.pill.special{background:#F6C343;color:#1C1500;border-color:#F6C343}
+.c-topic{font-family:var(--display);font-weight:800;font-size:clamp(54px,7vw,112px);line-height:.98;margin:18px 0 8px;overflow-wrap:anywhere}
+.c-topic.long{font-size:clamp(30px,3.1vw,48px);line-height:1.15;font-weight:700}
+.c-note{font-size:19px;color:var(--stage-muted);margin:0 0 10px;max-width:70ch}
+.code{background:#0A0C16;border:1px solid #333A5C;border-radius:12px;padding:16px 20px;font-family:var(--mono);font-size:clamp(18px,1.6vw,26px);line-height:1.45;white-space:pre-wrap;overflow-x:auto;margin:8px 0 10px;color:#E8EAF6}
+.fix{display:none;background:#14321F;border:1px solid #2C6B45;color:#CFF5DD;border-radius:12px;padding:12px 16px;font-size:18px;margin-bottom:10px}
+.fix.show{display:block}
+.meta{margin-top:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;padding-top:16px;border-top:1px solid #343B5E}
+.meta div{display:flex;flex-direction:column}
+.meta dt{font-size:13px;color:var(--stage-muted);font-weight:600}
+.meta dd{margin:0;font-family:var(--display);font-weight:800;font-size:28px;line-height:1.1}
+.meta .qt dd{color:#F27373} .meta .at dd{color:#6DB8F5}
+.actions{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px}
+
+/* timer */
+.right{display:flex;flex-direction:column;gap:14px}
+.phase-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.phase-tabs button{border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 4px;font-weight:700;font-size:14px;line-height:1.15}
+.phase-tabs button[aria-pressed="true"]{border-color:var(--text);background:var(--text);color:var(--panel)}
+.time{font-family:var(--display);font-weight:800;font-size:150px;line-height:.95;text-align:center;font-variant-numeric:tabular-nums;transition:color .2s}
+.time.warn{color:var(--med)} .time.danger{color:var(--hard);animation:blink 1s steps(2) infinite}
+.time.done{color:var(--hard)}
+@keyframes blink{50%{opacity:.55}}
+.time-label{text-align:center;font-weight:700;color:var(--muted);margin:-2px 0 10px}
+.bar{height:12px;border-radius:999px;background:var(--panel2);overflow:hidden;margin-bottom:12px}
+.bar i{display:block;height:100%;width:100%;background:var(--gold-strong);transition:width .2s linear}
+.timer-btns{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:8px}
+.timer-btns .btn{font-size:17px;padding:12px 8px}
+
+.used ol{list-style:none;margin:0 0 10px;padding:0;max-height:230px;overflow:auto;display:flex;flex-direction:column;gap:5px}
+.used li{display:flex;gap:9px;align-items:center;font-size:15px;padding:5px 8px;border-radius:8px;background:var(--panel2)}
+.used li .r{font-family:var(--display);font-weight:800;color:var(--muted);min-width:2.2em}
+.used li .d{width:9px;height:9px;border-radius:50%;flex:none}
+.d.easy{background:var(--easy)} .d.medium{background:var(--med)} .d.hard{background:var(--hard)}
+.used .empty{color:var(--muted);font-size:14.5px;background:none;padding:0}
+.used h2 span{font-family:var(--body);font-size:14px;font-weight:600;color:var(--muted)}
+
+/* dialogs */
+dialog{border:1px solid var(--line);border-radius:18px;background:var(--panel);color:var(--text);padding:0;width:min(760px,94vw);max-height:92vh}
+dialog::backdrop{background:rgba(10,12,22,.66)}
+.dlg{padding:22px 26px}
+.dlg h2{font-family:var(--display);font-weight:800;font-size:34px;margin:0 0 14px}
+.dlg h3{font-family:var(--display);font-weight:700;font-size:21px;margin:18px 0 8px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:600;color:var(--muted)}
+.form-grid input{border:2px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--panel);font-size:17px;font-weight:600;color:var(--text)}
+.check{display:flex;align-items:center;gap:10px;font-weight:600;margin-top:12px}
+.check input{width:20px;height:20px}
+.dlg-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;flex-wrap:wrap}
+kbd{font-family:var(--body);font-weight:700;border:1px solid var(--line);border-bottom-width:3px;border-radius:6px;padding:1px 7px;font-size:14px;background:var(--panel2)}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:15px;align-items:center}
+
+.final{width:min(980px,96vw)}
+.final-hero{background:var(--stage);color:var(--stage-text);padding:26px;text-align:center;position:relative}
+.final-hero::before,.final-hero::after{content:"";position:absolute;top:0;height:8px;width:50%}
+.final-hero::before{left:0;background:var(--red)} .final-hero::after{right:0;background:var(--blue)}
+.final-hero h2{font-family:var(--display);font-weight:800;font-size:58px;margin:0;line-height:1}
+.final-scores{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;margin:18px 0 8px}
+.fs .n{font-family:var(--display);font-weight:700;font-size:28px;color:var(--stage-muted)}
+.fs .v{font-family:var(--display);font-weight:800;font-size:120px;line-height:.9}
+.fs.t0 .v{color:#F27373} .fs.t1 .v{color:#6DB8F5}
+.fs .n{display:inline-flex;align-items:center;gap:8px} .fs.win .n{color:#F6C343}
+.winner{font-family:var(--display);font-weight:800;font-size:32px;color:#F6C343}
+.awards{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.awards label{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:16px}
+.awards input{border:2px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--panel);font-size:17px;color:var(--text)}
+
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--panel);padding:13px 20px;border-radius:12px;font-weight:600;font-size:17px;opacity:0;pointer-events:none;transition:.25s;max-width:min(680px,92vw);text-align:center;z-index:50}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+@media (max-height:820px) and (min-width:861px){
+  .card{min-height:360px;padding:22px 28px}
+  .score{font-size:64px} .time{font-size:112px}
+  .brand h1{font-size:36px} .team-name{font-size:26px}
+  .c-topic{font-size:clamp(48px,6vw,96px)}
+}
+@media (max-width:1250px){
+  .arena{grid-template-columns:260px minmax(0,1fr)}
+  .right{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr}
+}
+@media (max-width:860px){
+  .arena{grid-template-columns:1fr}
+  .right{grid-template-columns:1fr}
+  .scoreboard{grid-template-columns:1fr}
+  .vs{flex-direction:row;flex-wrap:wrap;min-width:0}
+  .score{font-size:64px}
+  .actions{grid-template-columns:1fr}
+  .card{min-height:380px;padding:22px}
+  .form-grid,.awards{grid-template-columns:1fr}
+  .time{font-size:110px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+/* ---------- Choose Your Risk additions ---------- */
+.team{grid-template-columns:1fr auto;grid-template-rows:auto auto}
+.breakdown{display:flex;gap:8px;flex-wrap:wrap;padding-left:6px}
+.breakdown span{font-size:14.5px;font-weight:600;padding:3px 10px;border-radius:8px;background:var(--panel2);color:var(--muted)}
+.breakdown b{font-family:var(--display);font-size:19px;color:var(--text);margin-left:4px}
+.c-topic{font-size:clamp(48px,5.6vw,96px);margin:12px 0 4px}
+.c-topic.long{font-size:clamp(28px,2.8vw,44px)}
+.risk{margin-top:14px}
+.risk-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.risk-head h3{margin:0;font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.3px;color:var(--stage-text)}
+.risk-head p{margin:0;font-family:var(--display);font-weight:700;font-size:22px;color:#F6C343}
+.risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.risk-btn{--rc:#4FCB8E;border:3px solid var(--rc);background:color-mix(in srgb,var(--rc) 12%,transparent);color:var(--rc);border-radius:16px;padding:14px 16px;text-align:left;display:flex;flex-direction:column;gap:2px;transition:background .15s, transform .1s}
+.risk-btn:hover{background:color-mix(in srgb,var(--rc) 24%,transparent);transform:translateY(-2px)}
+.risk-btn.medium{--rc:#F6C343} .risk-btn.hard{--rc:#F27373}
+.risk-btn .lvl{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:26px}
+.risk-btn .pts{font-family:var(--display);font-weight:800;font-size:clamp(40px,4vw,62px);line-height:1;color:var(--stage-text)}
+.risk-btn .pts small{font-size:.45em;color:var(--rc);margin-left:6px}
+.risk-btn .trade{font-size:15.5px;color:var(--stage-muted);font-weight:600}
+.risk-btn kbd{margin-left:auto;font-size:13px;background:transparent;border-color:color-mix(in srgb,var(--rc) 50%,transparent);color:var(--rc)}
+.bars-ic.lg{height:24px} .bars-ic.lg i{width:7px} .bars-ic.lg i:nth-child(1){height:9px} .bars-ic.lg i:nth-child(2){height:16px} .bars-ic.lg i:nth-child(3){height:24px}
+.locked{--rc:#4FCB8E;margin-top:14px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px;border-radius:16px;padding:16px 20px;background:color-mix(in srgb,var(--rc) 16%,transparent);border:3px solid var(--rc)}
+.locked.medium{--rc:#F6C343} .locked.hard{--rc:#F27373}
+.locked .lock{width:52px;height:52px;border-radius:14px;background:var(--rc);color:#10131F;display:grid;place-items:center}
+.locked .lock .ic{width:28px;height:28px}
+.locked h3{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(28px,2.8vw,42px);line-height:1;color:var(--rc)}
+.locked p{margin:4px 0 0;font-size:18px;color:var(--stage-text)}
+.locked .note-btn{background:transparent;border:1px solid #4A527A;color:var(--stage-muted);border-radius:10px;padding:7px 12px;font-weight:600;font-size:14px;display:inline-flex;gap:6px;align-items:center}
+.trainer-note{display:none;margin-top:10px;border:1px dashed #4A527A;border-radius:12px;padding:10px 14px;color:var(--stage-muted);font-size:16px}
+.trainer-note.show{display:block}
+.trainer-note b{color:var(--stage-text)}
+.meta{padding-top:14px;margin-top:16px}
+.meta dd{font-size:24px}
+
+/* scoring panel */
+.scoring{padding:16px}
+.scoring-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.scoring-head h2{margin:0}
+.scoring-head .sub{font-size:15px;color:var(--muted);font-weight:600}
+.stake{display:flex;gap:8px;flex-wrap:wrap}
+.stake span{font-weight:700;font-size:14px;padding:4px 10px;border-radius:999px;background:var(--panel2)}
+.sc-grid{display:grid;grid-template-columns:1.25fr 1fr .62fr;gap:14px}
+.sc-col{border:2px solid var(--line);border-radius:12px;padding:10px 12px;--tc:var(--muted)}
+.sc-col.q{border-color:color-mix(in srgb,var(--qc) 55%,var(--line))} .sc-col.a{border-color:color-mix(in srgb,var(--ac) 55%,var(--line))}
+.sc-col h3{margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline;font-family:var(--display);font-weight:800;font-size:21px}
+.sc-col h3 .tot{font-size:26px}
+.sc-col h3 .tot small{font-size:16px;color:var(--muted)}
+.crit{display:flex;flex-direction:column;gap:6px}
+.crit button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:2px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 10px;font-weight:600;font-size:15px}
+.crit button .p{font-family:var(--display);font-weight:800;font-size:20px;min-width:2.1ch;color:var(--cc)}
+.crit button .box{margin-left:auto;width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;flex:none}
+.crit button .box .ic{width:15px;height:15px;opacity:0}
+.crit button[aria-pressed="true"]{border-color:var(--cc);background:color-mix(in srgb,var(--cc) 14%,var(--panel))}
+.crit button[aria-pressed="true"] .box{background:var(--cc);border-color:var(--cc);color:var(--panel)}
+.crit button[aria-pressed="true"] .box .ic{opacity:1}
+.crit button:disabled{opacity:.4;cursor:not-allowed}
+.sc-col.q .crit button{--cc:var(--qc)} .sc-col.a .crit button{--cc:var(--ac)} .sc-col.b .crit button{--cc:var(--gold-strong)}
+.sc-col.b .crit button{flex-direction:column;align-items:flex-start;gap:2px;padding:10px}
+.sc-col.b .crit button .p{font-size:34px}
+.sc-col.b .crit button .box{position:absolute;right:10px;top:10px}
+.sc-col.b .crit button{position:relative}
+.sc-col.b p{font-size:13.5px;color:var(--muted);margin:8px 0 0}
+.sc-empty{padding:18px;text-align:center;color:var(--muted);border:2px dashed var(--line);border-radius:12px;font-weight:600}
+.used li .risk-tag{margin-left:auto;font-family:var(--display);font-weight:800;font-size:15px;padding:1px 8px;border-radius:6px;white-space:nowrap}
+.risk-tag.easy{color:var(--easy);background:color-mix(in srgb,var(--easy) 15%,transparent)}
+.risk-tag.medium{color:var(--med);background:color-mix(in srgb,var(--med) 15%,transparent)}
+.risk-tag.hard{color:var(--hard);background:color-mix(in srgb,var(--hard) 15%,transparent)}
+.used li .tt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs .bd{font-size:16px;color:var(--stage-muted);margin-top:6px}
+.wisely{margin-top:16px;padding:12px;border-radius:12px;background:var(--goldbg);font-size:14.5px}
+.wisely b{display:block;font-family:var(--display);font-size:20px;color:var(--gold);margin-bottom:4px}
+.wisely div{display:flex;gap:8px;align-items:center;margin-top:3px}
+dialog.confirm{width:min(520px,92vw)}
+dialog.confirm p{font-size:18px;margin:0;color:var(--text)}
+@media (max-width:1450px){ .sc-grid{grid-template-columns:1fr 1fr} .sc-col.b{grid-column:1 / -1} .sc-col.b .crit button{flex-direction:row;align-items:center;gap:10px;padding:8px 10px} .sc-col.b .crit button .p{font-size:24px} .sc-col.b .crit button .box{position:static;margin-left:auto} }
+@media (max-width:860px){ .risk-grid{grid-template-columns:1fr} .sc-grid{grid-template-columns:1fr} .locked{grid-template-columns:auto 1fr} .locked .note-btn{grid-column:1 / -1} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="bars" aria-hidden="true"><i></i><i></i></div>
+      <span class="mark" aria-hidden="true"><i data-ic="swords"></i></span>
+      <div><h1>DATA DUEL <span class="edition">EXCEL BASICS</span></h1><p>Ask Smart. Think Fast. Answer Right.</p></div>
+    </div>
+    <div class="top-actions">
+      <div class="round-chip" aria-live="polite"><span>Round</span><b id="roundNow">01</b><span>/ <span id="roundTotal">20</span></span></div>
+      <a class="btn" href="./" title="Open the full edition (Excel, Power BI, SQL, Python, Aptitude)"><i data-ic="swap"></i>Full edition</a>
+      <button class="btn" id="themeBtn" title="Switch light / dark"><i data-ic="contrast"></i>Theme</button>
+      <button class="btn" id="settingsBtn"><i data-ic="sliders"></i>Settings</button>
+      <button class="btn" id="finalBtn"><i data-ic="trophy"></i>Final score</button>
+    </div>
+  </header>
+
+  <section class="scoreboard" aria-label="Scoreboard">
+    <div class="team t0">
+      <div class="team-head"><input class="team-name" id="name0" aria-label="Team 1 name" maxlength="24"><span class="role" id="role0"></span></div>
+      <div class="score" id="score0" aria-live="polite">0</div>
+      <div class="breakdown" id="bd0"></div>
+    </div>
+    <div class="vs">
+      <span class="vs-mark">VS</span>
+      <button class="btn small" id="undoBtn"><i data-ic="undo"></i>Undo last score</button>
+      <button class="btn small danger" id="resetScoreBtn"><i data-ic="rotate"></i>Reset score</button>
+      <span class="last-action" id="lastAction"></span>
+    </div>
+    <div class="team t1">
+      <div class="team-head"><input class="team-name" id="name1" aria-label="Team 2 name" maxlength="24"><span class="role" id="role1"></span></div>
+      <div class="score" id="score1" aria-live="polite">0</div>
+      <div class="breakdown" id="bd1"></div>
+    </div>
+  </section>
+
+  <main class="arena">
+    <aside class="panel setup" aria-label="Round setup">
+      <section>
+        <h2>Categories <button class="link-btn" id="allTools">Select all</button></h2>
+        <div class="tool-grid" id="toolGrid"></div>
+      </section>
+      <section>
+        <h2>Special round</h2>
+        <div class="special-grid" id="specialGrid" role="group" aria-label="Special round"></div>
+        <p class="hint" id="specialHint"></p>
+      </section>
+      <div class="pool" id="poolInfo"></div>
+      <div class="wisely">
+        <b>Choose your difficulty wisely.</b>
+        <div><span class="dz-easy"><span class="bars-ic"><i class="on"></i><i class=""></i><i class=""></i></span></span>Easy: lower risk, lower reward.</div>
+        <div><span class="dz-medium"><span class="bars-ic"><i class="on"></i><i class="on"></i><i class=""></i></span></span>Medium: balanced risk and reward.</div>
+        <div><span class="dz-hard"><span class="bars-ic"><i class="on"></i><i class="on"></i><i class="on"></i></span></span>Hard: higher risk, higher reward.</div>
+      </div>
+    </aside>
+
+    <section class="stage">
+      <div class="card" id="card" aria-live="polite"></div>
+      <div class="actions">
+        <button class="btn primary xl" id="shuffleBtn"><i data-ic="dice"></i>SHUFFLE TOPIC</button>
+        <button class="btn xl" id="startBtn"><i data-ic="rotate"></i>RESTART TIMER</button>
+        <button class="btn xl" id="switchBtn"><i data-ic="swap"></i>SWITCH TEAMS</button>
+      </div>
+      <div class="panel scoring" id="scoring" aria-label="Round scoring"></div>
+    </section>
+
+    <aside class="right">
+      <div class="panel timer" aria-label="Timer">
+        <div class="phase-tabs" role="group" aria-label="Timer phase">
+          <button data-phase="q">Question prep</button>
+          <button data-phase="a">Answer</button>
+          <button data-phase="f">Follow-up</button>
+        </div>
+        <div class="time" id="timeNum" role="timer">30</div>
+        <div class="time-label" id="timeLabel">seconds</div>
+        <div class="bar"><i id="timeBar"></i></div>
+        <div class="timer-btns">
+          <button class="btn primary" id="tStart"><i data-ic="play"></i>Start</button>
+          <button class="btn" id="tPause"><i data-ic="pause"></i>Pause</button>
+          <button class="btn" id="tReset"><i data-ic="rotate"></i>Reset</button>
+        </div>
+      </div>
+      <div class="panel used">
+        <h2>Used topics <span id="usedCount"></span></h2>
+        <ol id="usedList"></ol>
+        <button class="btn small" id="resetUsedBtn"><i data-ic="rotate"></i>RESET USED TOPICS</button>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<dialog id="settingsDlg" aria-labelledby="setTitle">
+  <form method="dialog" class="dlg" id="settingsForm">
+    <h2 id="setTitle">Settings</h2>
+    <div class="form-grid">
+      <label>Team 1 name<input id="sName0" maxlength="24"></label>
+      <label>Team 2 name<input id="sName1" maxlength="24"></label>
+      <label>Total rounds<input id="sRounds" type="number" min="1" max="99"></label>
+      <label>Switch roles every (rounds)<input id="sSwitch" type="number" min="1" max="50"></label>
+    </div>
+    <h3>Timers (seconds)</h3>
+    <div class="form-grid">
+      <label>Question preparation<input id="sTq" type="number" min="5" max="600"></label>
+      <label>Answer time<input id="sTa" type="number" min="5" max="600"></label>
+      <label>Follow-up time<input id="sTf" type="number" min="5" max="600"></label>
+      <label>Rapid Fire answer time<input id="sTr" type="number" min="5" max="120"></label>
+    </div>
+    <label class="check"><input type="checkbox" id="sSound"> Sound effects (shuffle ticks and timer buzzer)</label>
+    <h3>Keyboard shortcuts</h3>
+    <div class="keys">
+      <kbd>S</kbd><span>Shuffle topic / next round</span>
+      <kbd>1</kbd><span>Question Team picks Easy</span>
+      <kbd>2</kbd><span>Question Team picks Medium</span>
+      <kbd>3</kbd><span>Question Team picks Hard</span>
+      <kbd>T</kbd><span>Start or pause timer</span>
+      <kbd>W</kbd><span>Switch teams</span>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn danger" id="newGameBtn" type="button">Start a new game</button>
+      <button class="btn" type="button" id="setCancel">Cancel</button>
+      <button class="btn primary" id="setSave" type="submit" value="save">Save settings</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="finalDlg" class="final" aria-labelledby="finalTitle">
+  <div class="final-hero">
+    <h2 id="finalTitle"><i data-ic="trophy"></i>FINAL SCORE</h2>
+    <div class="final-scores">
+      <div class="fs t0" id="fs0"><div class="n"></div><div class="v"></div><div class="bd"></div></div>
+      <div class="vs-mark" style="color:var(--stage-muted)">VS</div>
+      <div class="fs t1" id="fs1"><div class="n"></div><div class="v"></div><div class="bd"></div></div>
+    </div>
+    <div class="winner" id="winnerLine"></div>
+  </div>
+  <div class="dlg">
+    <h3 style="margin-top:0">Individual recognition</h3>
+    <div class="awards" id="awards"></div>
+    <div class="dlg-foot">
+      <button class="btn danger" type="button" id="finalNew">Start a new game</button>
+      <button class="btn primary" type="button" id="finalClose">Back to the game</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="confirmDlg" class="confirm" aria-labelledby="cfTitle">
+  <div class="dlg">
+    <h2 id="cfTitle">Are you sure?</h2>
+    <p id="cfMsg"></p>
+    <div class="dlg-foot">
+      <button class="btn" type="button" id="cfNo">Cancel</button>
+      <button class="btn primary" type="button" id="cfYes">Yes, continue</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const DATA = {"tools":{"numbers":{"name":"Numbers & Formats"},"text":{"name":"Text Functions"},"functions":{"name":"Basic Functions"},"sortfilter":{"name":"Sort & Filter"},"cf":{"name":"Conditional Formatting"},"aptitude":{"name":"Aptitude"}},"topics":[{"tool":"numbers","topic":"Entering Numbers vs Text","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"Number Format","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"Currency Format","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"Percentage Format","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"Decimal Places","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"Date Format","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"Cell References","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"Arithmetic Operators","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"AutoFill & Fill Handle","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"Comma Style","tier":"easy","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"numbers","topic":"Order of Operations (BODMAS)","tier":"medium","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Works well at every level."},{"tool":"numbers","topic":"Relative vs Absolute References ($)","tier":"medium","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Works well at every level."},{"tool":"numbers","topic":"Mixed References","tier":"medium","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Works well at every level."},{"tool":"numbers","topic":"Displayed Value vs Actual Value","tier":"medium","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Works well at every level."},{"tool":"numbers","topic":"Dates as Serial Numbers","tier":"medium","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Works well at every level."},{"tool":"numbers","topic":"Custom Number Formats","tier":"medium","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Works well at every level."},{"tool":"numbers","topic":"Numbers Stored as Text","tier":"medium","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Works well at every level."},{"tool":"numbers","topic":"Paste Special (Values)","tier":"medium","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Works well at every level."},{"tool":"numbers","topic":"ROUND, ROUNDUP & ROUNDDOWN","tier":"medium","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Works well at every level."},{"tool":"numbers","topic":"Custom Formats with Conditions ([Red], [>1000])","tier":"hard","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"numbers","topic":"Time Arithmetic (hours over 24)","tier":"hard","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"numbers","topic":"Fixing Numbers Stored as Text in Bulk","tier":"hard","easy_prompt_type":"what a format or feature does","medium_prompt_type":"applying it to a few cells or a small table","hard_prompt_type":"a displayed-value vs actual-value problem or a real-sheet scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"text","topic":"LEFT","tier":"easy","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"text","topic":"RIGHT","tier":"easy","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"text","topic":"LEN","tier":"easy","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"text","topic":"UPPER","tier":"easy","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"text","topic":"LOWER","tier":"easy","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"text","topic":"PROPER","tier":"easy","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"text","topic":"TRIM","tier":"easy","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"text","topic":"Joining Text with &","tier":"easy","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"text","topic":"CONCAT","tier":"easy","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"text","topic":"MID","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"FIND","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"SEARCH","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"SUBSTITUTE","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"REPLACE","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"TEXT Function","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"Text to Columns","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"Flash Fill","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"TEXTJOIN","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"VALUE","tier":"medium","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Works well at every level."},{"tool":"text","topic":"Extracting First / Last Name (LEFT + FIND)","tier":"hard","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"text","topic":"Nested Text Formulas (MID + FIND)","tier":"hard","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"text","topic":"Cleaning Messy Text (TRIM, CLEAN, SUBSTITUTE)","tier":"hard","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"text","topic":"Extracting the Domain from an Email ID","tier":"hard","easy_prompt_type":"what the function does / its result on one word","medium_prompt_type":"writing the formula for a given piece of text","hard_prompt_type":"combined text formulas or cleaning messy real data","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"functions","topic":"SUM","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"AVERAGE","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"MIN","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"MAX","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"COUNT","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"COUNTA","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"COUNTBLANK","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"TODAY & NOW","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"AutoSum","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"ROUND","tier":"easy","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"functions","topic":"IF","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"AND","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"OR","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"NOT","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"SUMIF","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"COUNTIF","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"AVERAGEIF","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"IFERROR","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"Nested IF","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"VLOOKUP (Exact Match)","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"LARGE & SMALL","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"RANK","tier":"medium","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Works well at every level."},{"tool":"functions","topic":"SUMIFS & COUNTIFS (Multiple Criteria)","tier":"hard","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"functions","topic":"IF with AND / OR","tier":"hard","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"functions","topic":"Error Values (#N/A, #DIV/0!, #VALUE!, #REF!, #NAME?)","tier":"hard","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"functions","topic":"DATEDIF & Age Calculation","tier":"hard","easy_prompt_type":"what the function returns","medium_prompt_type":"writing the formula for a small dataset","hard_prompt_type":"combined functions, handling errors or a business scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"sortfilter","topic":"Sort A to Z / Z to A","tier":"easy","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"sortfilter","topic":"Sort Smallest to Largest","tier":"easy","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"sortfilter","topic":"Sort by Date","tier":"easy","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"sortfilter","topic":"AutoFilter","tier":"easy","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"sortfilter","topic":"Text Filters","tier":"easy","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"sortfilter","topic":"Number Filters","tier":"easy","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"sortfilter","topic":"Clear Filter","tier":"easy","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"sortfilter","topic":"My Data Has Headers","tier":"easy","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"sortfilter","topic":"Multi-Level Sort","tier":"medium","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Works well at every level."},{"tool":"sortfilter","topic":"Custom Sort Order (Custom Lists)","tier":"medium","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Works well at every level."},{"tool":"sortfilter","topic":"Sort by Cell Colour","tier":"medium","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Works well at every level."},{"tool":"sortfilter","topic":"Filter by Colour","tier":"medium","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Works well at every level."},{"tool":"sortfilter","topic":"Date Filters","tier":"medium","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Works well at every level."},{"tool":"sortfilter","topic":"Top 10 Filter","tier":"medium","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Works well at every level."},{"tool":"sortfilter","topic":"Remove Duplicates","tier":"medium","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Works well at every level."},{"tool":"sortfilter","topic":"Sorting Only One Column (the trap)","tier":"medium","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Works well at every level."},{"tool":"sortfilter","topic":"Advanced Filter","tier":"hard","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"sortfilter","topic":"AND vs OR Criteria in Advanced Filter","tier":"hard","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"sortfilter","topic":"Totals on Filtered Data (SUBTOTAL)","tier":"hard","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"sortfilter","topic":"SORT, FILTER & UNIQUE Functions","tier":"hard","easy_prompt_type":"where the option is and what it does","medium_prompt_type":"the right steps for a given table","hard_prompt_type":"multi-condition tasks or explaining a sorting / filtering trap","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"cf","topic":"Highlight Cells Greater Than","tier":"easy","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"cf","topic":"Highlight Text That Contains","tier":"easy","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"cf","topic":"Highlight Duplicate Values","tier":"easy","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"cf","topic":"Data Bars","tier":"easy","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"cf","topic":"Colour Scales","tier":"easy","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"cf","topic":"Icon Sets","tier":"easy","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"cf","topic":"Clear Rules","tier":"easy","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"cf","topic":"Highlight Dates (A Date Occurring)","tier":"easy","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"cf","topic":"Top 10 / Bottom 10 Rules","tier":"medium","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Works well at every level."},{"tool":"cf","topic":"Above / Below Average","tier":"medium","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Works well at every level."},{"tool":"cf","topic":"Between Rule","tier":"medium","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Works well at every level."},{"tool":"cf","topic":"Highlight Blank Cells","tier":"medium","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Works well at every level."},{"tool":"cf","topic":"Unique Values","tier":"medium","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Works well at every level."},{"tool":"cf","topic":"Manage Rules","tier":"medium","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Works well at every level."},{"tool":"cf","topic":"Rule Priority Order","tier":"medium","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Works well at every level."},{"tool":"cf","topic":"Applies To Range","tier":"medium","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Works well at every level."},{"tool":"cf","topic":"Formula-Based Rules","tier":"hard","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"cf","topic":"Highlighting an Entire Row","tier":"hard","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"cf","topic":"Stop If True","tier":"hard","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"cf","topic":"$ References in Rule Formulas","tier":"hard","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"cf","topic":"Highlight Overdue Dates with TODAY()","tier":"hard","easy_prompt_type":"which rule to use","medium_prompt_type":"setting up a rule for a given range","hard_prompt_type":"formula-based rules, rule order or a real report scenario","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"aptitude","topic":"Percentages","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"Averages","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"Ratio and Proportion","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"Simple Interest","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"Number Series","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"Coding-Decoding","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"Direction Sense","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"LCM and HCF","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"Odd One Out","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"Divisibility Rules","tier":"easy","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Foundational topic: a Hard question needs a scenario or edge case to earn all 6."},{"tool":"aptitude","topic":"Profit and Loss","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Discount","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Time and Work","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Time Speed Distance","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Compound Interest","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Problems on Ages","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Blood Relations","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Data Interpretation (Tables)","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Percentage Increase & Decrease","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Alphabet Series","tier":"medium","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Works well at every level."},{"tool":"aptitude","topic":"Calendars","tier":"hard","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"aptitude","topic":"Clocks","tier":"hard","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"aptitude","topic":"Seating Arrangement","tier":"hard","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"aptitude","topic":"Mixtures & Alligations","tier":"hard","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"aptitude","topic":"Basic Probability","tier":"hard","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Advanced topic: an Easy question should stay on the core idea."},{"tool":"aptitude","topic":"Syllogisms","tier":"hard","easy_prompt_type":"single-step calculation or definition","medium_prompt_type":"two-step word problem","hard_prompt_type":"multi-step or trap-style reasoning problem","fit":"Advanced topic: an Easy question should stay on the core idea."}],"clash":{"numbers":["Relative vs Absolute Reference","Number Format vs ROUND","Currency vs Accounting Format","Paste vs Paste Values","General vs Text Format"],"text":["LEFT vs RIGHT vs MID","FIND vs SEARCH","SUBSTITUTE vs REPLACE","CONCAT vs TEXTJOIN","Text to Columns vs Flash Fill","UPPER vs PROPER"],"functions":["COUNT vs COUNTA","SUMIF vs COUNTIF","TODAY vs NOW","ROUND vs ROUNDUP","IF vs IFERROR","MAX vs LARGE"],"sortfilter":["Sort vs Filter","AutoFilter vs Advanced Filter","Remove Duplicates vs Unique Filter","Hiding Rows vs Filtering","SUM vs SUBTOTAL on Filtered Data"],"cf":["Data Bars vs Colour Scales","Icon Sets vs Data Bars","Preset Rule vs Formula Rule","Conditional Formatting vs Manual Fill Colour","Duplicate vs Unique Values"],"aptitude":["Mean vs Median","Simple vs Compound Interest","Profit % vs Discount %","Ratio vs Proportion","Percentage vs Percentage Points","LCM vs HCF"]},"scenarios":["A teacher has marks for 60 students in 5 subjects. Show each student's total, average and Pass / Fail, and highlight anyone below 35 in any subject.","A shop's sales sheet has 2,000 rows. The manager wants to see only last month's sales from Pune, sorted from highest to lowest.","An HR list has names typed like '  rAHUL   sHARMA ' with extra spaces and odd capitals. How would you clean the whole column?","A customer list has full names in one column. Split them into First Name and Last Name columns.","An attendance sheet must turn red automatically for any employee whose attendance is below 75%.","A product list has duplicate entries. How would you find them, review them and remove them safely?","Invoice due dates are in column D. Highlight overdue invoices automatically, every day, without editing the sheet.","Phone numbers were imported as 9.87654E+09, and some sales numbers won't add up. What went wrong and how do you fix it?","Create employee email IDs in the form firstname.lastname@company.com from separate name columns.","A sales manager wants the top 5 salespeople of the month ranked and highlighted.","A monthly expense sheet must show totals for Food, Travel and Rent from a long list of transactions.","Two people sorted the same sheet and now names no longer match their salaries. What happened, and how do you prevent it?"],"errors":[{"tool":"numbers","code":"=A2+B2*C2\n(meant: add A2 and B2, then multiply by C2)","fix":"Multiplication happens before addition. Use =(A2+B2)*C2."},{"tool":"numbers","code":"B2 shows 10% and C2 holds 500.\n=C2*B2/100","fix":"B2 already stores 0.1, so dividing by 100 gives 0.5 instead of 50. Use =C2*B2."},{"tool":"numbers","code":"=B2*C1\n(copied down to rows 3-10; C1 holds the tax rate)","fix":"C1 shifts to C2, C3 and so on when copied. Lock it: =B2*$C$1."},{"tool":"text","code":"=LEFT(A2, FIND(\" \", A2))\n(first name from \"Asha Patel\")","fix":"The result includes the trailing space. Use =LEFT(A2, FIND(\" \", A2)-1)."},{"tool":"text","code":"=A2&B2\n(A2 = \"Asha\", B2 = \"Patel\")","fix":"There is no space, so it gives \"AshaPatel\". Use =A2&\" \"&B2."},{"tool":"text","code":"=UPPER(A2)\n(to turn \"rahul sharma\" into \"Rahul Sharma\")","fix":"UPPER gives \"RAHUL SHARMA\". Use =PROPER(A2)."},{"tool":"functions","code":"=SUM(B2:B10)/9\n(average of B2:B10; some cells are blank)","fix":"Blank cells are still divided into the total. Use =AVERAGE(B2:B10), which ignores blanks."},{"tool":"functions","code":"=COUNTIF(B2:B100, >50)","fix":"The criterion must be text in quotes: =COUNTIF(B2:B100, \">50\")."},{"tool":"functions","code":"=IF(B2>=35, Pass, Fail)","fix":"Text results need quotes, otherwise Excel shows #NAME?. Use =IF(B2>=35, \"Pass\", \"Fail\")."},{"tool":"functions","code":"=COUNT(A2:A50)\n(count the names in column A)","fix":"COUNT only counts numbers. Use =COUNTA(A2:A50)."},{"tool":"sortfilter","code":"Selected only column A (Names)\nand clicked Sort A to Z.","fix":"Only that column moves, so names no longer match their other data. Select the whole table, or choose Expand the selection, before sorting."},{"tool":"sortfilter","code":"Filtered Region = North, then used\n=SUM(C2:C200) to total the visible rows.","fix":"SUM also adds the hidden rows. Use =SUBTOTAL(9, C2:C200)."},{"tool":"sortfilter","code":"Custom Sort on a table with headers:\nthe header row ended up in the middle.","fix":"My data has headers was unticked. Tick it so the header row stays on top."},{"tool":"cf","code":"Rule on A2:E50 to colour whole rows:\n=C2>50000","fix":"Without $, the column shifts for every cell, so rows don't colour consistently. Use =$C2>50000."},{"tool":"cf","code":"Rule 1: Cell Value > 50  ->  green\nRule 2: Cell Value > 80  ->  gold\nA score of 90 shows green.","fix":"Rules apply in order and green is first. Move the > 80 rule above it in Manage Rules, and tick Stop If True if needed."},{"tool":"aptitude","code":"A price rises by 20%, then falls by 20%.\nSo the final price equals the original.","fix":"Net change is 1.2 x 0.8 = 0.96, so the price is 4% lower."},{"tool":"aptitude","code":"Going at 60 km/h, returning at 40 km/h:\naverage speed = (60 + 40) / 2 = 50 km/h","fix":"For equal distances use the harmonic mean: 2 x 60 x 40 / (60 + 40) = 48 km/h."},{"tool":"aptitude","code":"Simple interest on 5,000 at 10% for 2 years:\nSI = 5000 x 10 x 2 = 1,00,000","fix":"Divide by 100: SI = 5000 x 10 x 2 / 100 = 1,000."},{"tool":"aptitude","code":"Cost price 80, selling price 100.\nProfit % = 20 / 100 x 100 = 20%","fix":"Profit % is on the cost price: 20 / 80 x 100 = 25%."}],"risk":{"easy":{"points":2,"desc":"Test basic concepts and definitions.","trade":"Lower risk, lower reward."},"medium":{"points":4,"desc":"Test understanding, comparison and practical application.","trade":"Balanced risk and reward."},"hard":{"points":6,"desc":"Test reasoning, troubleshooting, business scenarios and deeper technical understanding.","trade":"Higher risk, higher reward."}},"qcrit":{"easy":["Relevant to the topic","Technically correct & clearly framed"],"medium":["Relevant to the topic","Technically correct","Clearly framed","Tests understanding / application"],"hard":["Relevant to the topic","Technically correct","Clearly framed","Tests understanding / application","Requires reasoning / business scenario","Strong technical depth"]},"acrit":[["Correct answer",3],["Explanation / reasoning",1],["Example / application",1],["Technical terminology",1]],"prompt":{"numbers":{"easy":"what a format or feature does","medium":"applying it to a few cells or a small table","hard":"a displayed-value vs actual-value problem or a real-sheet scenario"},"text":{"easy":"what the function does / its result on one word","medium":"writing the formula for a given piece of text","hard":"combined text formulas or cleaning messy real data"},"functions":{"easy":"what the function returns","medium":"writing the formula for a small dataset","hard":"combined functions, handling errors or a business scenario"},"sortfilter":{"easy":"where the option is and what it does","medium":"the right steps for a given table","hard":"multi-condition tasks or explaining a sorting / filtering trap"},"cf":{"easy":"which rule to use","medium":"setting up a rule for a given range","hard":"formula-based rules, rule order or a real report scenario"},"aptitude":{"easy":"single-step calculation or definition","medium":"two-step word problem","hard":"multi-step or trap-style reasoning problem"},"business":{"easy":"which Excel feature to use","medium":"the steps to do it","hard":"a full approach with formulas, formatting and checks"},"clash":{"easy":"what each one does","medium":"key differences with an example","hard":"when to choose which, in a realistic scenario"},"error":{"easy":"spot the error","medium":"spot it and correct it","hard":"correct it, explain why it fails and give a safer alternative"}}};
+const TOOL_KEYS = Object.keys(DATA.tools);
+const TOOLS = DATA.tools;
+TOOLS.business = {name:"Real-World Task"};
+const ICONS = {
+  swords:'<polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/>',
+  sheet:'<rect width="18" height="18" x="3" y="3" rx="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="3" x2="21" y1="15" y2="15"/><line x1="9" x2="9" y1="9" y2="21"/><line x1="15" x2="15" y1="9" y2="21"/>',
+  chart:'<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+  database:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>',
+  code:'<path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/>',
+  sigma:'<path d="M18 7V5a1 1 0 0 0-1-1H6.5a.5.5 0 0 0-.4.8l4.5 6a2 2 0 0 1 0 2.4l-4.5 6a.5.5 0 0 0 .4.8H17a1 1 0 0 0 1-1v-2"/>',
+  briefcase:'<path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/>',
+  zap:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  bug:'<path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 3.8-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/>',
+  swap:'<path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>',
+  followup:'<polyline points="15 10 20 15 15 20"/><path d="M4 4v7a4 4 0 0 0 4 4h12"/>',
+  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>',
+  off:'<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+  dice:'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M16 8h.01"/><path d="M8 8h.01"/><path d="M8 16h.01"/><path d="M16 16h.01"/><path d="M12 12h.01"/>',
+  play:'<polygon points="6 3 20 12 6 21 6 3"/>',
+  pause:'<rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/>',
+  rotate:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+  undo:'<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11"/>',
+  sliders:'<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>',
+  contrast:'<circle cx="12" cy="12" r="10"/><path d="M12 18a6 6 0 0 0 0-12v12z"/>',
+  trophy:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+  eye:'<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  eyeoff:'<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  ask:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+  answer:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M13 8H7"/><path d="M17 12H7"/>',
+  award:'<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>',
+  star:'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  lock:'<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  hash:'<line x1="4" x2="20" y1="9" y2="9"/><line x1="4" x2="20" y1="15" y2="15"/><line x1="10" x2="8" y1="3" y2="21"/><line x1="16" x2="14" y1="3" y2="21"/>',
+  type:'<polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/>',
+  fx:'<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 17c2 0 2.8-1 2.8-2.8V10c0-2 1-3.3 3.2-3"/><path d="M9 11.2h5.7"/>',
+  funnel:'<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>',
+  palette:'<circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2z"/>',
+  flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/>'
+};
+const FILLED = new Set(["play","pause","star","zap"]);
+const ic = (n, extra="") => `<svg class="ic${FILLED.has(n)?" fill":""} ${extra}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||""}</svg>`;
+const TOOL_STYLE = {numbers:{ic:"hash",c:"#1F8A57"}, text:{ic:"type",c:"#2A7FA8"}, functions:{ic:"fx",c:"#6556D3"},
+  sortfilter:{ic:"funnel",c:"#C98F00"}, cf:{ic:"palette",c:"#D0583A"}, aptitude:{ic:"sigma",c:"#B4469B"}, business:{ic:"briefcase",c:"#4C5675"}};
+const tile = (tool, size="") => `<span class="tile ${size}" style="--tool:${TOOL_STYLE[tool].c}">${ic(TOOL_STYLE[tool].ic)}</span>`;
+const bars = (lvl, cls="") => `<span class="bars-ic ${cls}">${[1,2,3].map(i=>`<i class="${i<=lvl?"on":""}"></i>`).join("")}</span>`;
+const diffIcon = d => d==="random" ? ic("dice") : bars({easy:1,medium:2,hard:3}[d]);
+function hydrate(root=document){ root.querySelectorAll("i[data-ic]").forEach(el => { el.outerHTML = ic(el.dataset.ic); }); }
+const setBtn = (el, icon, text) => { el.innerHTML = ic(icon) + text; };
+const RISK = DATA.risk, QCRIT = DATA.qcrit, ACRIT = DATA.acrit;
+const LEVELS = ["easy","medium","hard"];
+const LV = {easy:"Easy", medium:"Medium", hard:"Hard"};
+const SPECIALS = {
+  followup:{icon:"followup", name:"Follow-Up Attack", label:"FOLLOW-UP ATTACK", hint:"The Question Team may ask one follow-up question after the answer. Use the follow-up timer."},
+  business:{icon:"briefcase", name:"Real-World Task", label:"REAL-WORLD TASK", hint:"An everyday office task replaces the topic. Teams explain how they would do it in Excel."},
+  rapid:{icon:"zap", name:"Rapid Fire", label:"RAPID FIRE", hint:"The Answer Team gets only the Rapid Fire answer time."},
+  error:{icon:"bug", name:"Find the Error", label:"FIND THE ERROR", hint:"Faulty logic appears on screen. The Question Team frames the challenge at its chosen risk."},
+  clash:{icon:"swap", name:"Concept Clash", label:"CONCEPT CLASH", hint:"Students compare two related concepts."}
+};
+const SPECIAL_KEYS = Object.keys(SPECIALS);
+
+const TOPICS = DATA.topics.map(t => ({...t, id:`t|${t.tool}|${t.topic}`}));
+const CLASH = [];
+for (const [tool, list] of Object.entries(DATA.clash)) list.forEach(t => CLASH.push({id:`c|${t}`, tool, topic:t}));
+const SCEN = DATA.scenarios.map((s,i)=>({id:`b|${i}`, tool:"business", topic:s}));
+const ERRS = DATA.errors.map((e,i)=>({...e, id:`e|${i}`}));
+
+const DEFAULTS = {
+  tools:[...TOOL_KEYS], special:"off",
+  names:["Team 1","Team 2"], qTeam:0,
+  round:1, totalRounds:20, switchEvery:4, switchDue:false,
+  current:null, rounds:{}, used:[], lastTool:null, history:[],
+  times:{q:30,a:45,f:30,r:15}, sound:true, awards:{}, theme:null
+};
+const KEY = "dataDuelBasics.v1";
+let S = load();
+function load(){
+  try{ const raw = localStorage.getItem(KEY); if(raw){ const o = JSON.parse(raw); return {...structuredClone(DEFAULTS), ...o, times:{...DEFAULTS.times, ...(o.times||{})}}; } }catch(e){}
+  return structuredClone(DEFAULTS);
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+
+const $ = s => document.querySelector(s);
+const rand = a => a[Math.floor(Math.random()*a.length)];
+const pad = n => String(n).padStart(2,"0");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rec = () => S.rounds[S.round];          // current round record (exists once risk is locked)
+const locked = () => !!rec();
+
+/* ---------- sound ---------- */
+let actx;
+function tone(freq=880, dur=.08, vol=.05, type="square"){
+  if(!S.sound) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq; o.connect(g); g.connect(actx.destination);
+    const t = actx.currentTime; g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.start(t); o.stop(t+dur);
+  }catch(e){}
+}
+function buzzer(){ tone(220,.5,.12,"sawtooth"); setTimeout(()=>tone(180,.6,.12,"sawtooth"),250); }
+let toastT;
+function toast(msg, ms=3200){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"), ms); }
+
+/* ---------- in-page confirmation (replaces browser pop-ups) ---------- */
+function ask(title, msg, yes="Yes, continue"){
+  return new Promise(res => {
+    const d = $("#confirmDlg");
+    $("#cfTitle").textContent = title; $("#cfMsg").textContent = msg; $("#cfYes").textContent = yes;
+    const done = v => { d.close(); res(v); };
+    $("#cfYes").onclick = () => done(true);
+    $("#cfNo").onclick = () => done(false);
+    d.oncancel = e => { e.preventDefault(); done(false); };
+    d.showModal(); $("#cfNo").focus();
+  });
+}
+/* click outside any dialog box closes it */
+document.querySelectorAll("dialog").forEach(d => d.addEventListener("click", e => {
+  if(e.target !== d) return;
+  const r = d.getBoundingClientRect();
+  if(e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom){
+    if(d.id === "confirmDlg") $("#cfNo").click(); else d.close();
+  }
+}));
+
+/* ---------- scoring maths ---------- */
+function roundPts(r){
+  const q = r.q.reduce((s,on)=>s+(on?1:0),0);
+  const a = r.a.reduce((s,on,i)=>s+(on?ACRIT[i][1]:0),0);
+  return {q, a, b: r.bonus?3:0};
+}
+function totals(){
+  const t = [{q:0,a:0,b:0},{q:0,a:0,b:0}];
+  for(const r of Object.values(S.rounds)){
+    const p = roundPts(r);
+    t[r.qTeam].q += p.q; t[r.qTeam].b += p.b; t[1-r.qTeam].a += p.a;
+  }
+  t.forEach(x => x.total = x.q + x.a + x.b);
+  return t;
+}
+
+/* ---------- setup panel ---------- */
+function renderSetup(){
+  $("#toolGrid").innerHTML = TOOL_KEYS.map(k => {
+    const n = TOPICS.filter(t=>t.tool===k).length;
+    return `<button class="choice" data-tool="${k}" aria-pressed="${S.tools.includes(k)}">${tile(k)}${TOOLS[k].name}<span class="cnt">${n}</span><span class="chk">${ic("check")}</span></button>`;
+  }).join("");
+  const SP = [["off","off","Off"],["surprise","gift","Surprise me"], ...SPECIAL_KEYS.map(k=>[k,SPECIALS[k].icon,SPECIALS[k].name])];
+  $("#specialGrid").innerHTML = SP.map(([k,icn,lab]) =>
+    `<button class="choice" data-special="${k}" aria-pressed="${S.special===k}"><span class="ico">${ic(icn)}</span>${lab}</button>`).join("");
+  $("#specialHint").textContent = S.special==="off" ? "Every round uses a normal topic." :
+    S.special==="surprise" ? "About one round in four becomes a random special round." : SPECIALS[S.special].hint;
+  const pool = poolFor(); const fresh = pool.filter(t=>!S.used.includes(t.id)).length;
+  $("#poolInfo").innerHTML = `<b>${fresh}</b> fresh of <b>${pool.length}</b> topics in this selection`;
+}
+function poolFor(){ return TOPICS.filter(t => S.tools.includes(t.tool)); }
+$("#toolGrid").addEventListener("click", e => {
+  const b = e.target.closest("[data-tool]"); if(!b) return;
+  const k = b.dataset.tool;
+  if(S.tools.includes(k)){
+    if(S.tools.length===1){ toast("Keep at least one category selected."); return; }
+    S.tools = S.tools.filter(x=>x!==k);
+  } else S.tools.push(k);
+  save(); renderSetup();
+});
+$("#allTools").onclick = () => { S.tools = [...TOOL_KEYS]; save(); renderSetup(); };
+$("#specialGrid").addEventListener("click", e => { const b=e.target.closest("[data-special]"); if(!b) return; S.special=b.dataset.special; save(); renderSetup(); });
+
+/* ---------- picking ---------- */
+function pickFrom(list, label){
+  if(!list.length) return null;
+  let avail = list.filter(x=>!S.used.includes(x.id));
+  if(!avail.length){
+    const ids = new Set(list.map(x=>x.id));
+    S.used = S.used.filter(id=>!ids.has(id)); avail = list;
+    toast(`All ${list.length} ${label} have been used. Starting a fresh cycle.`);
+  }
+  let tools = [...new Set(avail.map(x=>x.tool))];
+  if(tools.length>1 && S.lastTool) tools = tools.filter(t=>t!==S.lastTool);
+  const tool = rand(tools);
+  const item = rand(avail.filter(x=>x.tool===tool));
+  S.used.push(item.id); S.lastTool = item.tool;
+  return item;
+}
+function byTools(list){ const f = list.filter(x=>S.tools.includes(x.tool)); return f.length ? f : list; }
+function guideFor(kind){ const p = DATA.prompt[kind]; return {easy_prompt_type:p.easy, medium_prompt_type:p.medium, hard_prompt_type:p.hard}; }
+
+function drawRound(){
+  const sp = S.special==="off" ? null : S.special==="surprise" ? (Math.random()<.25 ? rand(SPECIAL_KEYS) : null) : S.special;
+  if(sp==="business"){ const s = pickFrom(SCEN,"business scenarios"); return {tool:"business", topic:s.topic, special:sp, ...guideFor("business"), fit:""}; }
+  if(sp==="error"){ const e = pickFrom(byTools(ERRS),"Find-the-Error snippets"); return {tool:e.tool, topic:"Find the error", code:e.code, fix:e.fix, special:sp, ...guideFor("error"), fit:""}; }
+  if(sp==="clash"){ const c = pickFrom(byTools(CLASH),"Concept Clash pairs"); return {tool:c.tool, topic:c.topic, special:sp, ...guideFor("clash"), fit:""}; }
+  const t = pickFrom(poolFor(), "topics in this selection");
+  return {tool:t.tool, topic:t.topic, tier:t.tier, special:sp, easy_prompt_type:t.easy_prompt_type, medium_prompt_type:t.medium_prompt_type, hard_prompt_type:t.hard_prompt_type, fit:t.fit};
+}
+
+/* ---------- card ---------- */
+const card = $("#card");
+function answerTime(){ return S.current && S.current.special==="rapid" ? S.times.r : S.times.a; }
+function riskChooser(){
+  return `<div class="risk">
+    <div class="risk-head"><h3>QUESTION TEAM: CHOOSE YOUR RISK</h3><p>Choose your difficulty wisely.</p></div>
+    <div class="risk-grid">${LEVELS.map((d,i)=>`
+      <button class="risk-btn ${d}" data-risk="${d}">
+        <span class="lvl">${bars(i+1,"lg")}${LV[d].toUpperCase()}<kbd>${i+1}</kbd></span>
+        <span class="pts">${RISK[d].points}<small>POINTS</small></span>
+        <span class="trade">${RISK[d].trade}</span>
+      </button>`).join("")}</div></div>`;
+}
+function lockedBanner(r){
+  const c = S.current;
+  return `<div class="locked ${r.diff}">
+    <span class="lock">${ic("lock")}</span>
+    <div><h3>${LV[r.diff].toUpperCase()} SELECTED: ${RISK[r.diff].points} POINTS AT STAKE</h3><p>${RISK[r.diff].desc}</p></div>
+    <button class="note-btn" id="noteBtn" type="button">${ic("eye")}Trainer note</button>
+  </div>
+  <div class="trainer-note" id="trainerNote">A good <b>${LV[r.diff]}</b> question on this topic is a <b>${esc(c[r.diff+"_prompt_type"])}</b>.${c.fit ? " "+esc(c.fit) : ""}</div>`;
+}
+function renderCard(animate=false){
+  card.classList.remove("revealed");
+  const c = S.current;
+  if(!c){
+    card.innerHTML = `<div class="idle"><div class="ready">READY?</div><p>Pick the categories, then press Shuffle topic. The Question Team chooses the difficulty after the topic appears.</p></div>`;
+    return;
+  }
+  const r = rec(); const qIdx = r ? r.qTeam : S.qTeam;
+  const tool = TOOLS[c.tool]; const isLong = c.topic.length > 40;
+  let body = "";
+  if(c.special==="error"){
+    body = `<div class="c-topic err-head" style="font-size:clamp(40px,4vw,64px)"><span class="tile lg">${ic("bug")}</span>Find the error</div>
+      <div class="code">${esc(c.code)}</div>
+      <div class="fix" id="fixBox"><b>Fix:</b> ${esc(c.fix)}</div>
+      <div><button class="btn small" id="fixBtn" type="button">${ic("eye")}Reveal the fix (trainer)</button></div>`;
+  } else {
+    body = `<div class="c-topic ${isLong?"long":""}">${esc(c.topic)}</div>`;
+    if(c.special==="clash") body += `<p class="c-note">Compare both: what each does, how they differ, and when to use which.</p>`;
+    if(c.special==="followup") body += `<p class="c-note">After the answer, the Question Team may ask one follow-up question.</p>`;
+    if(c.special==="rapid") body += `<p class="c-note">Rapid Fire: only ${S.times.r} seconds to answer.</p>`;
+  }
+  card.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="c-tool">${tile(c.tool,"lg")}${esc(tool.name)}</div>
+      <div class="badges">
+        ${c.special ? `<span class="pill special">${ic(SPECIALS[c.special].icon)}${SPECIALS[c.special].label}</span>` : ""}
+        ${r ? `<span class="pill ${r.diff}">${bars(LEVELS.indexOf(r.diff)+1)}${LV[r.diff].toUpperCase()}</span>` : `<span class="pill" style="color:var(--stage-muted)">${ic("dice")}TOPIC REVEALED</span>`}
+      </div>
+    </div>
+    ${body}
+    ${r ? lockedBanner(r) : riskChooser()}
+    <dl class="meta">
+      <div><dt>Round</dt><dd>${pad(S.round)}</dd></div>
+      <div><dt>Question time</dt><dd>${S.times.q} sec</dd></div>
+      <div><dt>Answer time</dt><dd>${answerTime()} sec</dd></div>
+      <div class="qt"><dt>Question team</dt><dd>${esc(S.names[qIdx])}</dd></div>
+      <div class="at"><dt>Answer team</dt><dd>${esc(S.names[1-qIdx])}</dd></div>
+    </dl>`;
+  card.querySelectorAll("[data-risk]").forEach(b => b.onclick = () => chooseRisk(b.dataset.risk));
+  const fb = $("#fixBtn");
+  if(fb) fb.onclick = () => { const f=$("#fixBox"); f.classList.toggle("show"); f.classList.contains("show") ? setBtn(fb,"eyeoff","Hide the fix") : setBtn(fb,"eye","Reveal the fix (trainer)"); };
+  const nb = $("#noteBtn");
+  if(nb) nb.onclick = () => { const n=$("#trainerNote"); n.classList.toggle("show"); n.classList.contains("show") ? setBtn(nb,"eyeoff","Hide note") : setBtn(nb,"eye","Trainer note"); };
+  if(animate){ void card.offsetWidth; card.classList.add("revealed"); }
+}
+
+/* ---------- round flow ---------- */
+let shuffling = false;
+function shuffle(){
+  if(shuffling) return;
+  if(locked()){
+    if(S.round >= S.totalRounds){ toast("All rounds are done. Opening the final score."); openFinal(); return; }
+    S.round++;
+    if((S.round-1) % S.switchEvery === 0){ S.switchDue = true; toast(`${S.round-1} rounds played. Time to switch roles!`, 4500); }
+  }
+  const next = drawRound(); if(!next) return;
+  shuffling = true; setBusy(true);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const pool = poolFor();
+  const delays = []; let d = 50, tot = 0;
+  if(reduce) delays.push(250); else while(tot < 1600){ delays.push(d); tot += d; d *= 1.13; }
+  card.classList.remove("revealed");
+  card.innerHTML = `<div class="spin"><div class="s-tool" id="sTool"></div><div class="s-topic" id="sTopic"></div></div>`;
+  let i = 0;
+  (function step(){
+    if(i >= delays.length){
+      S.current = next; shuffling = false; setBusy(false);
+      tone(1046,.12,.06,"triangle"); setTimeout(()=>tone(1318,.2,.06,"triangle"),110);
+      resetTimer("q"); save(); renderAll(true); return;
+    }
+    const t = rand(pool);
+    $("#sTool").textContent = TOOLS[t.tool].name; $("#sTopic").textContent = t.topic;
+    tone(600 + Math.random()*400, .03, .025);
+    setTimeout(step, delays[i++]);
+  })();
+}
+function setBusy(b){ ["#shuffleBtn","#startBtn","#switchBtn"].forEach(s=>$(s).disabled=b); }
+
+function chooseRisk(diff){
+  if(shuffling) return;
+  if(!S.current){ toast("Shuffle a topic first."); return; }
+  if(locked()){ toast(`Risk is locked at ${LV[rec().diff]} for this round.`); return; }
+  S.rounds[S.round] = {qTeam:S.qTeam, diff, tool:S.current.tool,
+    topic:S.current.special==="error" ? "Find the error" : S.current.topic,
+    q:Array(QCRIT[diff].length).fill(false), a:ACRIT.map(()=>false), bonus:false};
+  tone(diff==="hard"?1318:diff==="medium"?1046:880,.18,.07,"triangle");
+  save(); resetTimer("q"); startTimer(); renderAll();
+  toast(`${LV[diff].toUpperCase()} SELECTED: ${RISK[diff].points} POINTS AT STAKE`);
+}
+function restartTimer(){
+  if(!locked()){ toast("The Question Team must choose Easy, Medium or Hard first."); return; }
+  resetTimer("q"); startTimer();
+}
+function switchTeams(){
+  S.qTeam = 1 - S.qTeam; S.switchDue = false; save(); renderAll();
+  toast(locked() ? `Roles switched. ${S.names[S.qTeam]} asks from the next round; this round's scoring is unchanged.`
+                 : `${S.names[S.qTeam]} now asks. ${S.names[1-S.qTeam]} now answers.`, 4200);
+}
+
+/* ---------- scoring ---------- */
+function toggle(kind, idx){
+  const r = rec(); if(!r){ toast("Scoring opens after the Question Team chooses a risk."); return; }
+  if(kind==="b"){
+    if(!r.bonus && r.a[0]){ toast("The bonus is only for rounds where the Answer Team did not answer correctly."); return; }
+    r.bonus = !r.bonus;
+  } else if(kind==="a"){
+    if(idx===0 && !r.a[0] && r.bonus){ toast("Remove the +3 bonus first: a correct answer means no Question Challenge Bonus."); return; }
+    r.a[idx] = !r.a[idx];
+  } else r.q[idx] = !r.q[idx];
+  const on = kind==="b" ? r.bonus : r[kind][idx];
+  S.history.push({round:S.round, kind, idx});
+  tone(on ? 988 : 520, .1, .05, "triangle");
+  save(); renderScores(); renderScoring(); renderUsed();
+  const team = kind==="a" ? 1-r.qTeam : r.qTeam;
+  [0,1].forEach(i => { if(i===team){ const el=$("#score"+i); el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); } });
+}
+function renderScoring(){
+  const el = $("#scoring"), r = rec();
+  if(!r){
+    el.innerHTML = `<div class="scoring-head"><h2>Round scoring</h2></div>
+      <div class="sc-empty">${S.current ? "Waiting for the Question Team to choose Easy, Medium or Hard." : "Shuffle a topic to begin the round."}</div>`;
+    return;
+  }
+  const p = roundPts(r), qmax = RISK[r.diff].points, qn = S.names[r.qTeam], an = S.names[1-r.qTeam];
+  const qColor = r.qTeam===0 ? "var(--red)" : "var(--blue)", aColor = r.qTeam===0 ? "var(--blue)" : "var(--red)";
+  el.style.setProperty("--qc", qColor); el.style.setProperty("--ac", aColor);
+  el.innerHTML = `
+    <div class="scoring-head">
+      <div><h2>Round ${pad(S.round)} scoring</h2><div class="sub">${esc(TOOLS[r.tool].name)}: ${esc(r.topic.length>60 ? r.topic.slice(0,58)+"…" : r.topic)}</div></div>
+      <div class="stake"><span class="risk-tag ${r.diff}">${LV[r.diff].toUpperCase()}</span><span>Question up to ${qmax}</span><span>Answer up to 6</span><span>Bonus +3</span></div>
+    </div>
+    <div class="sc-grid">
+      <div class="sc-col q"><h3><span>${ic("ask")} ${esc(qn)} asks</span><span class="tot">${p.q}<small> / ${qmax}</small></span></h3>
+        <div class="crit">${QCRIT[r.diff].map((c,i)=>`<button data-k="q" data-i="${i}" aria-pressed="${r.q[i]}"><span class="p">+1</span>${c}<span class="box">${ic("check")}</span></button>`).join("")}</div></div>
+      <div class="sc-col a"><h3><span>${ic("answer")} ${esc(an)} answers</span><span class="tot">${p.a}<small> / 6</small></span></h3>
+        <div class="crit">${ACRIT.map(([c,pt],i)=>`<button data-k="a" data-i="${i}" aria-pressed="${r.a[i]}" ${i===0 && r.bonus ? "disabled" : ""}><span class="p">+${pt}</span>${c}<span class="box">${ic("check")}</span></button>`).join("")}</div></div>
+      <div class="sc-col b"><h3><span>Bonus</span><span class="tot">${p.b}<small> / 3</small></span></h3>
+        <div class="crit"><button data-k="b" data-i="0" aria-pressed="${r.bonus}" ${r.a[0] && !r.bonus ? "disabled" : ""}><span class="p">+3</span>Question Master answers own question<span class="box">${ic("check")}</span></button></div>
+        <p>Only when the Answer Team misses. Added on top of the ${LV[r.diff]} score.</p></div>
+    </div>`;
+  el.querySelectorAll("[data-k]").forEach(b => b.onclick = () => toggle(b.dataset.k, +b.dataset.i));
+}
+$("#undoBtn").onclick = () => {
+  const h = S.history.pop(); if(!h){ toast("Nothing to undo."); return; }
+  const r = S.rounds[h.round]; if(!r){ save(); return; }
+  if(h.kind==="b") r.bonus = !r.bonus; else r[h.kind][h.idx] = !r[h.kind][h.idx];
+  save(); renderAll(); toast(`Undid the last change in round ${pad(h.round)}.`);
+};
+$("#resetScoreBtn").onclick = async () => {
+  if(!await ask("Reset score?", "Reset all points for both teams? Rounds and topics stay as they are.", "Reset score")) return;
+  for(const r of Object.values(S.rounds)){ r.q = r.q.map(()=>false); r.a = r.a.map(()=>false); r.bonus=false; }
+  S.history = []; save(); renderAll();
+};
+function renderScores(){
+  const t = totals();
+  [0,1].forEach(i=>{
+    $("#score"+i).textContent = t[i].total;
+    if(document.activeElement !== $("#name"+i)) $("#name"+i).value = S.names[i];
+    const r = $("#role"+i), q = S.qTeam===i;
+    r.innerHTML = q ? ic("ask")+"Question team" : ic("answer")+"Answer team"; r.className = "role " + (q?"q":"a");
+    $("#bd"+i).innerHTML = `<span>Question<b>${t[i].q}</b></span><span>Answer<b>${t[i].a}</b></span><span>Bonus<b>+${t[i].b}</b></span>`;
+  });
+  const h = S.history[S.history.length-1];
+  $("#lastAction").textContent = h ? `Last change: round ${pad(h.round)}` : "";
+}
+[0,1].forEach(i => $("#name"+i).addEventListener("input", e => { S.names[i] = e.target.value.trim() || `Team ${i+1}`; save(); renderCard(); renderScoring(); }));
+
+/* ---------- timer ---------- */
+const T = {phase:"q", total:30, remaining:30, running:false, endAt:0, id:null};
+function phaseTime(p){ return p==="q" ? S.times.q : p==="a" ? answerTime() : S.times.f; }
+function resetTimer(p=T.phase){ stopTimer(); T.phase=p; T.total=T.remaining=phaseTime(p); renderTimer(); }
+function startTimer(){
+  if(T.running) return;
+  if(T.remaining<=0) T.remaining = T.total;
+  T.running = true; T.endAt = performance.now() + T.remaining*1000;
+  T.id = setInterval(tick, 100); renderTimer();
+}
+function stopTimer(){ T.running=false; clearInterval(T.id); }
+let lastBeep = null;
+function tick(){
+  const left = Math.max(0,(T.endAt - performance.now())/1000);
+  const sec = Math.ceil(left);
+  if(sec !== T.remaining){ T.remaining = sec; if(sec<=5 && sec>0 && lastBeep!==sec){ tone(880,.07,.05); lastBeep=sec; } }
+  if(left<=0){
+    stopTimer(); T.remaining=0; buzzer(); renderTimer();
+    if(T.phase==="q"){ toast("Preparation over! Ask the question. The answer timer is ready.", 4500); setTimeout(()=>{ if(!T.running) resetTimer("a"); }, 1500); }
+    else if(T.phase==="a") toast("Time's up! Score both teams below.", 4500);
+    else toast("Follow-up time is over.");
+    return;
+  }
+  renderTimer(left);
+}
+function renderTimer(left){
+  const n = $("#timeNum");
+  n.textContent = T.remaining;
+  n.className = "time" + (T.remaining===0 ? " done" : T.remaining<=5 && T.running ? " danger" : T.remaining<=10 ? " warn" : "");
+  const frac = (left ?? T.remaining) / T.total;
+  $("#timeBar").style.width = Math.max(0,Math.min(1,frac))*100 + "%";
+  $("#timeLabel").textContent = (T.phase==="q" ? "Question preparation" : T.phase==="a" ? "Answer time" : "Follow-up time") + (T.running ? ", running" : T.remaining===0 ? ", time's up" : "");
+  document.querySelectorAll("[data-phase]").forEach(b => b.setAttribute("aria-pressed", b.dataset.phase===T.phase));
+  setBtn($("#tStart"), "play", T.running ? "Running" : (T.remaining < T.total && T.remaining>0 ? "Resume" : "Start"));
+}
+document.querySelectorAll("[data-phase]").forEach(b => b.onclick = () => resetTimer(b.dataset.phase));
+$("#tStart").onclick = startTimer;
+$("#tPause").onclick = () => { if(!T.running) return; T.remaining = Math.ceil((T.endAt-performance.now())/1000); stopTimer(); renderTimer(); };
+$("#tReset").onclick = () => resetTimer();
+
+/* ---------- used list ---------- */
+function renderUsed(){
+  $("#usedCount").textContent = `${S.used.filter(id=>id.startsWith("t|")).length} / ${TOPICS.length}`;
+  const ol = $("#usedList");
+  const list = Object.entries(S.rounds).sort((a,b)=>b[0]-a[0]);
+  if(!list.length){ ol.innerHTML = `<li class="empty">Rounds appear here once the Question Team picks a risk.</li>`; return; }
+  ol.innerHTML = list.map(([n,r]) => { const p = roundPts(r);
+    return `<li><span class="r">R${pad(n)}</span>${tile(r.tool,"sm")}<span class="tt">${esc(r.topic)}</span><span class="risk-tag ${r.diff}">${LV[r.diff][0]} ${p.q}/${RISK[r.diff].points}${p.b?" +3":""}</span></li>`; }).join("");
+}
+$("#resetUsedBtn").onclick = async () => {
+  if(!await ask("Reset used topics?", "Make every topic available again? Round history and scores stay.", "Reset topics")) return;
+  S.used = []; S.lastTool = null; save(); renderAll(); toast("All topics are available again.");
+};
+
+/* ---------- small bits ---------- */
+function renderSmall(){
+  $("#roundNow").textContent = pad(S.round);
+  $("#roundTotal").textContent = S.totalRounds;
+  const sb = $("#shuffleBtn");
+  if(locked() && S.round>=S.totalRounds) setBtn(sb,"trophy","FINISH GAME");
+  else setBtn(sb,"dice", locked() ? "NEXT ROUND" : S.current ? "SHUFFLE AGAIN" : "SHUFFLE TOPIC");
+  const st = $("#startBtn");
+  locked() ? setBtn(st,"rotate","RESTART PREP TIMER") : setBtn(st,"lock","PICK A RISK TO START");
+  st.disabled = !locked();
+  $("#switchBtn").classList.toggle("pulse", !!S.switchDue);
+}
+function renderAll(animate=false){ renderSetup(); renderScores(); renderCard(animate); renderScoring(); renderUsed(); renderSmall(); }
+$("#shuffleBtn").onclick = shuffle;
+$("#startBtn").onclick = restartTimer;
+$("#switchBtn").onclick = switchTeams;
+
+/* ---------- settings ---------- */
+const sd = $("#settingsDlg");
+$("#settingsBtn").onclick = () => {
+  $("#sName0").value=S.names[0]; $("#sName1").value=S.names[1];
+  $("#sRounds").value=S.totalRounds; $("#sSwitch").value=S.switchEvery;
+  $("#sTq").value=S.times.q; $("#sTa").value=S.times.a; $("#sTf").value=S.times.f; $("#sTr").value=S.times.r;
+  $("#sSound").checked=S.sound; sd.showModal();
+};
+$("#setCancel").onclick = () => sd.close();
+$("#settingsForm").addEventListener("submit", () => {
+  const num = (id, lo, hi, fb) => { const v = parseInt($(id).value,10); return isNaN(v) ? fb : Math.min(hi,Math.max(lo,v)); };
+  S.names = [$("#sName0").value.trim()||"Team 1", $("#sName1").value.trim()||"Team 2"];
+  S.totalRounds = num("#sRounds",1,99,S.totalRounds); S.switchEvery = num("#sSwitch",1,50,S.switchEvery);
+  S.times = {q:num("#sTq",5,600,S.times.q), a:num("#sTa",5,600,S.times.a), f:num("#sTf",5,600,S.times.f), r:num("#sTr",5,120,S.times.r)};
+  S.sound = $("#sSound").checked;
+  if(S.round > S.totalRounds) S.totalRounds = S.round;
+  save(); if(!T.running) resetTimer(); renderAll(); toast("Settings saved.");
+});
+async function newGame(){
+  if(!await ask("Start a new game?", "Scores, rounds and used topics will be cleared. Team names, tools and timers stay.", "Start new game")) return false;
+  Object.assign(S, {history:[], round:1, switchDue:false, current:null, rounds:{}, used:[], lastTool:null, awards:{}, qTeam:0});
+  save(); resetTimer("q"); renderAll(); toast("New game ready. Good luck to both teams!"); return true;
+}
+$("#newGameBtn").onclick = async () => { sd.close(); await newGame(); };
+
+/* ---------- final ---------- */
+const AWARDS = ["Best Question Master","Best Answer Master","Best Technical Question","Best Real-World Answer","Best Performer"];
+const fd = $("#finalDlg");
+function openFinal(){
+  stopTimer(); renderTimer();
+  const t = totals();
+  [0,1].forEach(i=>{ const el=$("#fs"+i); el.querySelector(".n").textContent=S.names[i]; el.querySelector(".v").textContent=t[i].total;
+    el.querySelector(".bd").textContent = `Question ${t[i].q}, Answer ${t[i].a}, Bonus +${t[i].b}`; el.classList.remove("win"); });
+  const [a,b] = [t[0].total, t[1].total];
+  if(a===b) $("#winnerLine").textContent = a===0 ? "No points yet. Let the duel begin!" : "It's a tie! Both teams duelled brilliantly.";
+  else { const w = a>b?0:1; $("#fs"+w).classList.add("win"); $("#fs"+w).querySelector(".n").innerHTML = esc(S.names[w]) + ic("trophy");
+    $("#winnerLine").textContent = `${S.names[w]} wins by ${Math.abs(a-b)} point${Math.abs(a-b)===1?"":"s"}!`; }
+  $("#awards").innerHTML = AWARDS.map((n,i)=>`<label><span>${ic(["ask","answer","code","briefcase","award"][i])}${n}</span><input data-award="${esc(n)}" value="${esc(S.awards[n]||"")}" placeholder="Student name"></label>`).join("");
+  $("#awards").querySelectorAll("input").forEach(inp => inp.oninput = () => { S.awards[inp.dataset.award] = inp.value; save(); });
+  fd.showModal();
+}
+$("#finalBtn").onclick = openFinal;
+$("#finalClose").onclick = () => fd.close();
+$("#finalNew").onclick = async () => { fd.close(); await newGame(); };
+
+/* ---------- theme ---------- */
+function applyTheme(){ if(S.theme) document.documentElement.setAttribute("data-theme", S.theme); else document.documentElement.removeAttribute("data-theme"); }
+$("#themeBtn").onclick = () => {
+  const dark = S.theme ? S.theme==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  S.theme = dark ? "light" : "dark"; applyTheme(); save();
+};
+
+/* ---------- keyboard ---------- */
+document.addEventListener("keydown", e => {
+  if(e.target.closest("input,select,textarea,dialog") || e.ctrlKey || e.metaKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if(k==="s"){ e.preventDefault(); shuffle(); }
+  else if(["1","2","3"].includes(k) && S.current && !locked()){ e.preventDefault(); chooseRisk(LEVELS[+k-1]); }
+  else if(k==="t"){ e.preventDefault(); T.running ? $("#tPause").click() : (locked() ? startTimer() : toast("Choose a risk first.")); }
+  else if(k==="w"){ e.preventDefault(); switchTeams(); }
+});
+
+hydrate(); applyTheme(); resetTimer("q"); renderAll();
+</script>
+</body>
+</html>

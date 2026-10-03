@@ -5,12 +5,14 @@
 A classroom competition for Data Analytics / Data Science students. One team frames the questions, the other answers, and both are scored every round.
 
 **Live tool:** https://ashwinc1797.github.io/data-duel/
+**Excel Basics edition:** https://ashwinc1797.github.io/data-duel/excel-basics.html
 
 ## What's here
 
 | File | What it is |
 |---|---|
 | `index.html` | The interactive Topic Shuffler: tool selection, random topics, Choose Your Risk (Easy 2 / Medium 4 / Hard 6), timers, criteria-based scoring, scoreboard and final awards |
+| `excel-basics.html` | The same game for beginners: Numbers & Formats, Text Functions, Basic Functions, Sort & Filter, Conditional Formatting and Aptitude (138 topics, plus its own Concept Clash pairs, Find-the-Error snippets and Real-World Tasks). Its game progress is saved separately from the full edition |
 | `Data_Duel_Activity_Introduction_and_Rules.pdf` | 15-page rules handbook for the projector or to share with students |
 
 ## How a round works

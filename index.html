@@ -55,7 +55,8 @@ button{cursor:pointer}
 .round-chip span{font-size:18px;color:var(--muted)} .round-chip b{font-size:34px;line-height:1}
 
 .btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 16px;font-weight:600;font-size:16px;display:inline-flex;align-items:center;gap:8px;justify-content:center;transition:background .15s, transform .08s}
-.btn:hover{background:var(--panel2)} .btn:active{transform:translateY(1px)}
+a.btn{color:inherit;text-decoration:none}
+.btn:hover{background:var(--panel2)}.btn:active{transform:translateY(1px)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 .btn.small{padding:7px 12px;font-size:14.5px}
 .btn.danger{color:var(--hard)}
@@ -334,6 +335,7 @@ dialog.confirm p{font-size:18px;margin:0;color:var(--text)}
     </div>
     <div class="top-actions">
       <div class="round-chip" aria-live="polite"><span>Round</span><b id="roundNow">01</b><span>/ <span id="roundTotal">20</span></span></div>
+      <a class="btn" href="excel-basics.html" title="Open the Excel Basics & Aptitude edition"><i data-ic="swap"></i>Excel Basics</a>
       <button class="btn" id="themeBtn" title="Switch light / dark"><i data-ic="contrast"></i>Theme</button>
       <button class="btn" id="settingsBtn"><i data-ic="sliders"></i>Settings</button>
       <button class="btn" id="finalBtn"><i data-ic="trophy"></i>Final score</button>
